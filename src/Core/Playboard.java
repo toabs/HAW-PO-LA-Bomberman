@@ -7,7 +7,7 @@ import java.util.Set;
 public class Playboard {
 	
 	private Field[][] board;
-	private Set<Player> players;
+	private Set<Player> players = new HashSet<>();
 	private Set<Bomb> bombs = new HashSet<>();;
 	private int stepsLeft;
 	private final Set<Integer> POSSIBLE_ACTIONS = new HashSet<>(Arrays.asList(new Integer[]{ 0, 1, 2, 3, 4, 5 }));
@@ -16,11 +16,27 @@ public class Playboard {
 		this.board = board;
 		this.stepsLeft = stepsLeft;
 	}
+	
+	private Playboard(Playboard playboard) {
+		this.board = playboard.board.clone();
+		this.stepsLeft = playboard.stepsLeft;
+		for (Bomb bomb : playboard.bombs) {
+			this.bombs.add(bomb.clone());
+		}
+		for (Player player : playboard.players) {
+			this.players.add(player.clone());
+		}
+	}
+	
+	public Playboard clone() {
+		return new Playboard(this);
+	}
+	
+	
 
 	public void setBoard(Field[][] board) {
 		this.board = board;
 	}
-
 
 	public Set<Integer> getPossibleActions() {
 		return POSSIBLE_ACTIONS;
