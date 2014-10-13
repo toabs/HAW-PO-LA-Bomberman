@@ -1,5 +1,6 @@
 package Core;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,6 +10,7 @@ public class Playboard {
 	private Set<Player> players;
 	private Set<Bomb> bombs = new HashSet<>();;
 	private int stepsLeft;
+	private final Set<Integer> POSSIBLE_ACTIONS = new HashSet<>(Arrays.asList(new Integer[]{ 0, 1, 2, 3, 4, 5 }));
 		
 	public Playboard(Field[][] board, int stepsLeft) {
 		this.board = board;
@@ -19,6 +21,10 @@ public class Playboard {
 		this.board = board;
 	}
 
+
+	public Set<Integer> getPossibleActions() {
+		return POSSIBLE_ACTIONS;
+	}
 
 	public void setStepsLeft(int stepsLeft) {
 		this.stepsLeft = stepsLeft;
