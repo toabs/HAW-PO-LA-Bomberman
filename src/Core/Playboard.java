@@ -26,8 +26,8 @@ public class Playboard {
 		return POSSIBLE_ACTIONS;
 	}
 
-	public void setStepsLeft(int stepsLeft) {
-		this.stepsLeft = stepsLeft;
+	public void decreaseStepsLeft() {
+		stepsLeft--;
 	}
 
 	public Field[][] getBoard() {
