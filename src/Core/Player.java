@@ -10,6 +10,15 @@ public class Player extends PlayboardObject{
 		super(field);
 		this.id = id;
 	}
+	
+	private Player(Player player) {
+		super(player.getField().clone());
+		this.id = player.id;
+	}
+	
+	public Player clone() {
+		return new Player(this);
+	}
 
 	public boolean isAlive() {
 		return isAlive;
