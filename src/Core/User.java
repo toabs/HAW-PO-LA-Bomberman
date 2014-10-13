@@ -1,7 +1,5 @@
 package Core;
 
-import java.awt.event.KeyListener;
-
 public abstract class User {
 		
 	private static final int POINTS_FOR_WINNING = 10;
@@ -15,10 +13,6 @@ public abstract class User {
 	public int getId() {
 		return id;
 	}
-	
-	abstract public int getAction(Playboard playboard);
-	
-	abstract public void resetMove();
 
 	public int getPoints() {
 		return points;
@@ -31,4 +25,10 @@ public abstract class User {
 	public void won() {
 		points += POINTS_FOR_WINNING;
 	}
+	
+	abstract public int getAction(Playboard playboard);
+	
+	abstract public void resetMove();
+	
+	abstract public void gameOver(boolean won);
 }
