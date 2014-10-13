@@ -20,6 +20,17 @@ public class Bomb extends PlayboardObject {
 		this.counter = counter;
 		this.explosionRadius = explosionRadius;
 	}
+	
+	private Bomb(Bomb bomb) {
+		super(bomb.getField().clone());
+		this.counter = bomb.counter;
+		this.explosionRadius = bomb.explosionRadius;
+		this.exploded = bomb.exploded;
+	}
+	
+	public Bomb clone() {
+		return new Bomb(this);
+	}
 
 	public int getExplosionRadius() {
 		return explosionRadius;
