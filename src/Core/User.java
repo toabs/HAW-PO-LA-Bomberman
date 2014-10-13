@@ -2,7 +2,7 @@ package Core;
 
 import java.awt.event.KeyListener;
 
-public abstract class User implements KeyListener {
+public abstract class User {
 		
 	private static final int POINTS_FOR_WINNING = 10;
 	private int id;
