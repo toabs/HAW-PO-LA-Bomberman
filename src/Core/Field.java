@@ -19,6 +19,17 @@ public class Field {
 		this.explodable = explodable;
 	}
 
+	private Field(Field field) {
+		this.x = field.x;
+		this.y = field.y;
+		this.passable = field.passable;
+		this.explodable = field.explodable;
+	}
+	
+	public Field clone() {
+		return new Field(this);
+	}
+
 	public int getX() {
 		return x;
 	}	
