@@ -109,4 +109,9 @@ public class Human extends User implements KeyListener {
 		action = 0;
 	}
 
+	@Override
+	public void gameOver(boolean won) {
+		// do nothing
+	}
+
 }
