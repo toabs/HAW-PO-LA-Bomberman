@@ -23,9 +23,9 @@ public class Game {
 	private Set<Field> explodedFields = new HashSet<>();
 	private int bombCounter;
 	private int explosionRadius;
-	private int maxSteps;
 	private int boardSize;
 	private boolean gameOver = false;
+	private int maxSteps;
 	
 
 	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps) {
@@ -33,7 +33,7 @@ public class Game {
 		this.maxBoardIndex = boardSize - PLAYER_RANGE;		
 		this.bombCounter = bombCounter;
 		this.explosionRadius = explosionArea;
-		this.maxSteps = maxSteps;		
+		this.maxSteps = maxSteps;
 		this.usersList = usersList;
 		initializeBoard();
 		initializePlayers();
@@ -70,16 +70,16 @@ public class Game {
 		this.playboard = new Playboard(board, maxSteps);
 	}
 	
+	public int getMaxSteps() {
+		return maxSteps;
+	}
+
 	public int getBombCounter() {
 		return bombCounter;
 	}
 
 	public int getExplosionRadius() {
 		return explosionRadius;
-	}
-
-	public int getMaxSteps() {
-		return maxSteps;
 	}
 	
 	public int getBoardSize() {
@@ -122,9 +122,10 @@ public class Game {
 		if (playersAlive.size() == 1 && !gameOver) {
 			playersAlive.get(INDEX_0).won();
 			gameOver = true;
-		} else if (playersAlive.size() < 1 && !gameOver) {
+		} else if (playersAlive.size() == 0 && !gameOver || playboard.getStepsLeft() == 0) {
 			gameOver = true;
-		}		
+		}
+		playboard.decreaseStepsLeft();
 	}
 
 	private void playerActions() {
