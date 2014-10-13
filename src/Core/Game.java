@@ -11,13 +11,13 @@ import java.util.Set;
 
 public class Game {
 	
-	private final int PLAYER_ID_INIT = 1;
 	private final int PLAYER_RANGE = 1;
 	private final int MIN_FIELD = 0;
 	private final int INDEX_0 = 0;
 	
 	private Playboard playboard;
 	private Map<User, Player> users = new HashMap<>();
+	private List<User> usersList;
 	private int maxBoardIndex;
 	private LinkedList<Field> starting_fields = new LinkedList<>();
 	private Set<Field> explodedFields = new HashSet<>();
@@ -28,21 +28,21 @@ public class Game {
 	private boolean gameOver = false;
 	
 
-	public Game(Set<User> users, int boardSize, int bombCounter, int explosionArea, int maxSteps) {
+	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps) {
 		this.boardSize = boardSize;		
 		this.maxBoardIndex = boardSize - PLAYER_RANGE;		
 		this.bombCounter = bombCounter;
 		this.explosionRadius = explosionArea;
 		this.maxSteps = maxSteps;		
+		this.usersList = usersList;
 		initializeBoard();
-		initializePlayers(users);
+		initializePlayers();
 	}
 	
-	private void initializePlayers(Set<User> users) {
+	private void initializePlayers() {
 		initializeStartingFields();		
-		int i = PLAYER_ID_INIT;
-		for (User user : users) {			
-			this.users.put(user, new Player(i++, starting_fields.pop()));
+		for (User user : usersList) {			
+			this.users.put(user, new Player(user.getId(), starting_fields.pop()));
 		}
 		playboard.setPlayers(new HashSet<Player>(this.users.values()));
 	}
@@ -86,8 +86,10 @@ public class Game {
 		return boardSize;
 	}
 	
-	public Set<User> getUsers(){
-		return users.keySet();
+	public List<User> getUsers(){
+		List<User> usersList = new ArrayList<>();
+		usersList.addAll(users.keySet());
+		return usersList;
 	}
 	
 	public Playboard getPlayboard() {
