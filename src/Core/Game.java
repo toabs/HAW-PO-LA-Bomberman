@@ -34,7 +34,7 @@ public class Game {
 		this.bombCounter = bombCounter;
 		this.explosionRadius = explosionArea;
 		this.maxSteps = maxSteps;
-		this.usersList = usersList;
+		this.usersList = usersList;		
 		initializeBoard();
 		initializePlayers();
 	}
@@ -120,9 +120,14 @@ public class Game {
 			}
 		}
 		if (playersAlive.size() == 1 && !gameOver) {
-			playersAlive.get(INDEX_0).won();
+			User player = playersAlive.get(INDEX_0);
+			player.won();
+			player.gameOver(true);			
 			gameOver = true;
 		} else if (playersAlive.size() == 0 && !gameOver || playboard.getStepsLeft() == 0) {
+			for (User user : usersList) {
+				user.gameOver(false);
+			}
 			gameOver = true;
 		}
 		playboard.decreaseStepsLeft();
@@ -133,7 +138,7 @@ public class Game {
 			Player player = entry.getValue();
 			User user = entry.getKey();
 			Field field = player.getField();
-			switch (user.getAction(playboard)) {
+			switch (user.getAction(playboard.clone())) {
 			case 1:
 				if (field.getY() - PLAYER_RANGE >= MIN_FIELD) {
 					setPlayerPosition(field.getX(), field.getY() - PLAYER_RANGE, player);
