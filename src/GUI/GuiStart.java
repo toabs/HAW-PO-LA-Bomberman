@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import Core.Field;
 import Core.Bomb;
 import Core.Game;
+import Core.Human;
 import Core.Playboard;
 import Core.Player;
 import Core.User;
@@ -146,7 +147,6 @@ public class GuiStart extends JPanel implements Runnable {
 			for (User user : game.getUsers()) {
 				System.out.println("Spieler " + user.getId() + ": " + user.getPoints() + " Punkte");
 			}
-			System.out.println();
 			game = new Game(game.getUsers(), game.getBoardSize(), game.getBombCounter(), game.getExplosionRadius(), game.getMaxSteps());
 		}
 	}
