@@ -61,7 +61,9 @@ public class GuiStart extends JPanel implements Runnable {
 		frame.setVisible(true);
 
 		for (User user : game.getUsers()) {
-			frame.addKeyListener(user);
+			if (user instanceof Human) {
+				frame.addKeyListener((Human) user);
+			}
 		};
 		new Thread(this).start();
 	}
