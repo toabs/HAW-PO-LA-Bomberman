@@ -16,7 +16,7 @@ public class GuiMain {
 		int boardsize = 15;
 		int bombCounter = 8;
 		int explosionArea = 4;
-		int maxSteps = 50;
+		int maxSteps = 100;
 		
 		new GuiStart(new Game(users, boardsize, bombCounter, explosionArea, maxSteps));
 	}
