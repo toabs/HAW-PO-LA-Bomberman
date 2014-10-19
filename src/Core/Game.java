@@ -16,7 +16,7 @@ public class Game {
 	private final int INDEX_0 = 0;
 	
 	private Playboard playboard;
-	private Map<User, Player> users = new HashMap<>();
+	private Map<User, Player> users = new HashMap<User, Player>();
 	private List<User> usersList;
 	private int maxBoardIndex;
 	private LinkedList<Field> starting_fields = new LinkedList<>();
@@ -122,7 +122,14 @@ public class Game {
 		if (playersAlive.size() == 1 && !gameOver) {
 			User player = playersAlive.get(INDEX_0);
 			player.won();
-			player.gameOver(true);			
+			player.gameOver(true);	
+			
+			//gameOver(false) to everyone, who lost			
+			for(Entry<User, Player> entry : users.entrySet()) {
+			    if(entry.getKey() != player) {
+			        entry.getKey().gameOver(false);
+			    }
+			}
 			gameOver = true;
 		} else if (playersAlive.size() == 0 && !gameOver || playboard.getStepsLeft() == 0) {
 			for (User user : usersList) {
