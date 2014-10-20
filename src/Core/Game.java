@@ -170,7 +170,7 @@ public class Game {
 				}
 				break;
 			case 5:
-				playboard.addBomb(bombCounter, player.getX(), player.getY(), explosionRadius);
+				playboard.addBomb(bombCounter, player.getX(), player.getY(), explosionRadius, player.getId());
 				break;
 			default:
 				break;
