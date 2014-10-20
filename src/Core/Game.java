@@ -141,11 +141,14 @@ public class Game {
 	}
 
 	private void playerActions() {
+	    //Get the playboard only once
+	    Playboard currentBoard = playboard.clone();
+	    
 		for (Entry<User, Player> entry : users.entrySet()) {
 			Player player = entry.getValue();
 			User user = entry.getKey();
 			Field field = player.getField();
-			switch (user.getAction(playboard.clone())) {
+			switch (user.getAction(currentBoard)) {
 			case 1:
 				if (field.getY() - PLAYER_RANGE >= MIN_FIELD) {
 					setPlayerPosition(field.getX(), field.getY() - PLAYER_RANGE, player);
