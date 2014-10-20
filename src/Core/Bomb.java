@@ -37,6 +37,10 @@ public class Bomb extends PlayboardObject {
 	public int getExplosionRadius() {
 		return explosionRadius;
 	}
+	
+	public int getPlayerId() {
+		return playerId;
+	}
 
 	public boolean isExploded() {
 		return exploded;
