@@ -65,7 +65,10 @@ public class Playboard {
 	public void addBomb(int bombCounter, int x, int y, int explosionRadius, int playerId) {
 		Field field = board[x][y];
 		field.setPassable(false);
-		bombs.add(new Bomb(bombCounter, field, explosionRadius, playerId));
+		Bomb newBomb = new Bomb(bombCounter, field, explosionRadius, playerId);
+		if (!bombs.contains(newBomb)) {
+			bombs.add(newBomb);		
+		}
 	}
 
 	public int getStepsLeft() {
