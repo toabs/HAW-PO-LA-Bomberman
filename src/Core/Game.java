@@ -204,18 +204,14 @@ public class Game {
 	private Set<Field> explodingFields() {
 		Set<Field> explodedFields = new HashSet<>();
 		Set<Bomb> bombs = playboard.getBombs();
-		for (Bomb bomb : bombs) {
-			if (bomb.shouldExplode()) {				
-				explodedFields.addAll(chainExplosions(bomb.explode(playboard.getBoard()), bombs));					
-			} else {
-				bomb.countDown();
-			}
-		}	
+		explodedFields = chainExplosions(explodedFields);
 		Set<Bomb> bombsToRemove = new HashSet<>();
 		for (Bomb bomb : bombs) {
 			if (bomb.isExploded()) {
 				bomb.getField().setPassable(true);
 				bombsToRemove.add(bomb);
+			} else {
+				bomb.countDown();
 			}
 		}
 		bombs.removeAll(bombsToRemove);
@@ -223,11 +219,11 @@ public class Game {
 		return explodedFields;
 	}
 	
-	private Set<Field> chainExplosions(Set<Field> explodedFields, Set<Bomb> bombs) {
-		for (Bomb bomb : bombs) {
-			if (explodedFields.contains(bomb.getField()) && !bomb.isExploded()) {
+	private Set<Field> chainExplosions(Set<Field> explodedFields) {
+		for (Bomb bomb : playboard.getBombs()) {
+			if (bomb.shouldExplode() || explodedFields.contains(bomb.getField()) && !bomb.isExploded()) {
 				explodedFields.addAll(bomb.explode(playboard.getBoard()));	
-				chainExplosions(explodedFields, bombs);					
+				return chainExplosions(explodedFields);					
 			}			
 		}
 		return explodedFields;
