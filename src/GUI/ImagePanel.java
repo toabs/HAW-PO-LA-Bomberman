@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -17,7 +18,7 @@ public class ImagePanel extends JPanel {
 	protected void paintComponent(Graphics arg0) {
 		if (image != null) {
 			super.paintComponent(arg0);
-			arg0.drawImage(image, 0, 0, null);
+			arg0.drawImage(image, 0, 0, new Color(0,0,0,0), null);
 		}
 	}
 

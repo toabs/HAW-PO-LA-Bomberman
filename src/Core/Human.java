@@ -110,7 +110,7 @@ public class Human extends User implements KeyListener {
 	}
 
 	@Override
-	public void gameOver(boolean won) {
+	public void gameOver(boolean won, Playboard playboard) {
 		// do nothing
 	}
 

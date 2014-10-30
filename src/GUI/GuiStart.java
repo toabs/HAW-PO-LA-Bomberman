@@ -1,11 +1,13 @@
 package GUI;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -21,22 +23,24 @@ import Core.User;
 
 public class GuiStart extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
+	private static final String RESOURCE_FOLDER = File.separator + "resources";
 	private int boardsize;
 
 	private JFrame frame;
 	private ImagePanel[][] guiBoard;
 	private Game game;
-
-	BufferedImage bombe;
-	BufferedImage player1;
-	BufferedImage player2;
-	BufferedImage player1Bombe;
-	BufferedImage player2Bombe;
+	private ImageHelper imageHelper = new ImageHelper();
+	private BufferedImage[] playerImages;
+	private BufferedImage[] playerWithBombImages;
+	BufferedImage bombImg;
 	BufferedImage wall;
-	BufferedImage freiesFeld;
+	BufferedImage emptyField;
 	BufferedImage explosion;
+	private long gameoverSleep;
+	
 
-	public GuiStart(Game game) {
+	public GuiStart(Game game, long gameoverSleep) {
+		this.gameoverSleep = gameoverSleep;
 		this.boardsize = game.getBoardSize();
 		this.frame = new JFrame();
 		this.guiBoard = new ImagePanel[boardsize][boardsize];
@@ -70,22 +74,30 @@ public class GuiStart extends JPanel implements Runnable {
 	}
 
 	private void loadPictures() {
-		try {
-			bombe = ImageIO.read(new File(getClass().getResource("/GUI/Bombe.png").toURI()));
-			player1Bombe = ImageIO.read(new File(getClass().getResource("/GUI/BombeSpieler1.png").toURI()));
-			player2Bombe = ImageIO.read(new File(getClass().getResource("/GUI/BombeSpieler2.png").toURI()));
-			player1 = ImageIO.read(new File(getClass().getResource("/GUI/Spieler1.png").toURI()));
-			player2 = ImageIO.read(new File(getClass().getResource("/GUI/Spieler2.png").toURI()));
-			wall = ImageIO.read(new File(getClass().getResource("/GUI/Wall.png").toURI()));
-			explosion = ImageIO.read(new File(getClass().getResource("/GUI/Explosion.png").toURI()));
-			freiesFeld = ImageIO.read(new File(getClass().getResource("/GUI/LeeresFeld.png").toURI()));
-
+		try {			
+			Set<Player> players = game.getPlayboard().getPlayers();
+			playerImages = new BufferedImage[players.size()];
+			playerWithBombImages = new BufferedImage[players.size()];
+			for (Player player : players) {
+				int index = player.getId() - 1;
+				Color nextColor = imageHelper.getNextColor();
+				playerImages[index] = imageHelper.colorImage(readImage("player.png"), nextColor);
+				playerWithBombImages[index] = imageHelper.colorImage(readImage("player_with_bomb.png"), nextColor);
+			}
+			bombImg = readImage("bomb.png");
+			wall = readImage("wall.png");
+			explosion = readImage("explosion.png");
+			emptyField = readImage("emptyField.png");
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private BufferedImage readImage(String filename) throws IOException, URISyntaxException {
+		return ImageIO.read(new File(getClass().getResource(RESOURCE_FOLDER + File.separator + filename).toURI()));
 	}
 
 	@Override
@@ -101,32 +113,17 @@ public class GuiStart extends JPanel implements Runnable {
 						if (field.isWall()) {
 							guiBoard[field.getX()][field.getY()].setImage(wall);
 						} else {
-							guiBoard[field.getX()][field.getY()].setImage(freiesFeld);
+							guiBoard[field.getX()][field.getY()].setImage(emptyField);
 						}
 					}				
 				}
 				
 				for (Bomb bomb : playboard.getBombs()) {
-					guiBoard[bomb.getX()][bomb.getY()].setImage(bombe);
+					guiBoard[bomb.getX()][bomb.getY()].setImage(bombImg);
 				}
 				
 				for (Player player : playboard.getPlayers()) {
-					switch (player.getId()) {
-					case 1:	
-						guiBoard[player.getX()][player.getY()].setImage(player1);
-						break;
-					case 2:	
-						guiBoard[player.getX()][player.getY()].setImage(player2);
-						break;
-					case 3:	
-						guiBoard[player.getX()][player.getY()].setImage(player1);
-						break;
-					case 4:	
-						guiBoard[player.getX()][player.getY()].setImage(player2);
-						break;
-					default:
-						break;
-					}
+					guiBoard[player.getX()][player.getY()].setImage(imageForPlayer(player, playboard.getBombs()));
 				}
 				
 				for (Field field : game.getExplodedFields()) {
@@ -139,15 +136,30 @@ public class GuiStart extends JPanel implements Runnable {
 				}
 				repaint();				
 			}
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			for (User user : game.getUsers()) {
-				System.out.println("Spieler " + user.getId() + ": " + user.getPoints() + " Punkte");
-			}
-			game = new Game(game.getUsers(), game.getBoardSize(), game.getBombCounter(), game.getExplosionRadius(), game.getMaxSteps());
+			gameover();
 		}
+	}
+
+	private void gameover() {
+		try {
+			Thread.sleep(gameoverSleep);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		for (User user : game.getUsers()) {
+			System.out.println("Spieler " + user.getId() + ": " + user.getPoints() + " Punkte");
+		}
+		game = new Game(game.getUsers(), game.getBoardSize(), game.getBombCounter(), game.getExplosionRadius(), game.getMaxSteps(), game.getStepSleep());
+		
+	}
+
+	private BufferedImage imageForPlayer(Player player, Set<Bomb> bombs) {
+		for (Bomb bomb : bombs) {
+			if (bomb.getField() == player.getField()) {
+				return playerWithBombImages[player.getId() - 1];
+			}
+			
+		}
+		return playerImages[player.getId() - 1];
 	}
 }

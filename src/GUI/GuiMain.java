@@ -17,7 +17,9 @@ public class GuiMain {
 		int bombCounter = 8;
 		int explosionArea = 4;
 		int maxSteps = 100;
+		long gameoverSleep = 1000l;
+		long stepSleep = 300l;
 		
-		new GuiStart(new Game(users, boardsize, bombCounter, explosionArea, maxSteps));
+		new GuiStart(new Game(users, boardsize, bombCounter, explosionArea, maxSteps, stepSleep), gameoverSleep);
 	}
 }

@@ -26,15 +26,17 @@ public class Game {
 	private int boardSize;
 	private boolean gameOver = false;
 	private int maxSteps;
+	private long stepSleep;
 	
 
-	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps) {
+	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps, long stepSleep) {
 		this.boardSize = boardSize;		
 		this.maxBoardIndex = boardSize - PLAYER_RANGE;		
 		this.bombCounter = bombCounter;
 		this.explosionRadius = explosionArea;
 		this.maxSteps = maxSteps;
 		this.usersList = usersList;		
+		this.stepSleep = stepSleep;
 		initializeBoard();
 		initializePlayers();
 	}
@@ -106,7 +108,7 @@ public class Game {
 	}
 
 	public void doIteration() throws InterruptedException {
-		Thread.sleep(300);
+		Thread.sleep(stepSleep);
 		playerActions();	
 		updatePlayboard();
 		checkGameOver();
@@ -122,18 +124,18 @@ public class Game {
 		if (playersAlive.size() == 1 && !gameOver) {
 			User player = playersAlive.get(INDEX_0);
 			player.won();
-			player.gameOver(true);	
+			player.gameOver(true, playboard);	
 			
 			//gameOver(false) to everyone, who lost			
 			for(Entry<User, Player> entry : users.entrySet()) {
 			    if(entry.getKey() != player) {
-			        entry.getKey().gameOver(false);
+			        entry.getKey().gameOver(false, playboard);
 			    }
 			}
 			gameOver = true;
 		} else if (playersAlive.size() == 0 && !gameOver || playboard.getStepsLeft() == 0) {
 			for (User user : usersList) {
-				user.gameOver(false);
+				user.gameOver(false, playboard);
 			}
 			gameOver = true;
 		}
@@ -229,6 +231,10 @@ public class Game {
 			}			
 		}
 		return explodedFields;
+	}
+
+	public long getStepSleep() {
+		return this.stepSleep;
 	}
 	
 }
