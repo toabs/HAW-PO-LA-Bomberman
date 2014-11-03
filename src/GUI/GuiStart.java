@@ -3,6 +3,9 @@ package GUI;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +14,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Core.Field;
@@ -25,6 +29,7 @@ public class GuiStart extends JPanel implements Runnable {
 	private static final long serialVersionUID = 1L;
 	private static final String RESOURCE_FOLDER = File.separator + "resources";
 	private int boardsize;
+	private boolean end = false;
 
 	private JFrame frame;
 	private ImagePanel[][] guiBoard;
@@ -50,7 +55,12 @@ public class GuiStart extends JPanel implements Runnable {
 
 	private void init() {
 		setLayout(new GridLayout(boardsize, boardsize));
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); Default action is bad
+		frame.addWindowListener(new WindowAdapter() {
+		    public void windowClosing(WindowEvent e){
+		        GuiStart.this.end();                  
+            }
+		});
 
 		for (int j = 0; j < boardsize; j++) {
 			for (int i = 0; i < boardsize; i++) {
@@ -73,7 +83,12 @@ public class GuiStart extends JPanel implements Runnable {
 		new Thread(this).start();
 	}
 
-	private void loadPictures() {
+    protected void end()
+    {
+        this.end = true;
+    }
+
+    private void loadPictures() {
 		try {			
 			Set<Player> players = game.getPlayboard().getPlayers();
 			playerImages = new BufferedImage[players.size()];
@@ -102,9 +117,9 @@ public class GuiStart extends JPanel implements Runnable {
 
 	@Override
 	public void run() {
-		while (frame.isVisible()) {	
+		while (!end) {	
 			boolean notGameOver = true;
-			while (notGameOver) {
+			while (notGameOver && !end) {
 				notGameOver = !game.isGameOver();
 				Playboard playboard = game.getPlayboard();
 				
@@ -138,6 +153,8 @@ public class GuiStart extends JPanel implements Runnable {
 			}
 			gameover();
 		}
+
+        System.exit(0);
 	}
 
 	private void gameover() {
