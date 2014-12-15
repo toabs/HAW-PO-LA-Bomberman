@@ -69,7 +69,7 @@ public class Game {
 				}
 			}
 		}
-		this.playboard = new Playboard(board, maxSteps);
+		this.playboard = new Playboard(board, maxSteps, explosionRadius, bombCounter);
 	}
 	
 	public int getMaxSteps() {
@@ -149,26 +149,25 @@ public class Game {
 		for (Entry<User, Player> entry : users.entrySet()) {
 			Player player = entry.getValue();
 			User user = entry.getKey();
-			Field field = player.getField();
 			switch (user.getAction(currentBoard)) {
 			case 1:
-				if (field.getY() - PLAYER_RANGE >= MIN_FIELD) {
-					setPlayerPosition(field.getX(), field.getY() - PLAYER_RANGE, player);
+				if (player.getY() - PLAYER_RANGE >= MIN_FIELD) {
+					setPlayerPosition(player.getX(), player.getY() - PLAYER_RANGE, player);
 				}				
 				break;
 			case 2:
-				if (field.getY() + PLAYER_RANGE <= maxBoardIndex) {
-					setPlayerPosition(field.getX(), field.getY() + PLAYER_RANGE, player);
+				if (player.getY() + PLAYER_RANGE <= maxBoardIndex) {
+					setPlayerPosition(player.getX(), player.getY() + PLAYER_RANGE, player);
 				}
 				break;
 			case 3:
-				if (field.getX() - PLAYER_RANGE >= MIN_FIELD) {
-					setPlayerPosition(field.getX() - PLAYER_RANGE, field.getY(), player);
+				if (player.getX() - PLAYER_RANGE >= MIN_FIELD) {
+					setPlayerPosition(player.getX() - PLAYER_RANGE, player.getY(), player);
 				}
 				break;
 			case 4:
-				if (field.getX() + PLAYER_RANGE <= maxBoardIndex) {
-					setPlayerPosition(field.getX() + PLAYER_RANGE, field.getY(), player);
+				if (player.getX() + PLAYER_RANGE <= maxBoardIndex) {
+					setPlayerPosition(player.getX() + PLAYER_RANGE, player.getY(), player);
 				}
 				break;
 			case 5:
@@ -228,6 +227,7 @@ public class Game {
 		}
 		return explodedFields;
 	}
+	
 
 	public long getStepSleep() {
 		return this.stepSleep;
