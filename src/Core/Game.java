@@ -9,12 +9,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+/**
+ * Class that handles one iteration of the game
+ * and holds all informations of the current game
+ */
 public class Game {
 	
+	/**
+	 * Constants
+	 */
 	private final int PLAYER_RANGE = 1;
 	private final int MIN_FIELD = 0;
 	private final int INDEX_0 = 0;
 	
+	/**
+	 * Instance variables
+	 */
 	private Playboard playboard;
 	private Map<User, Player> users = new HashMap<User, Player>();
 	private List<User> usersList;
@@ -28,12 +38,22 @@ public class Game {
 	private int maxSteps;
 	private long stepSleep;
 	
-
-	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionArea, int maxSteps, long stepSleep) {
+	/******* Constructor and Initializer *******/
+	
+	/**
+	 * Constructor
+	 * @param usersList		List of users that are playing the game
+	 * @param boardSize		Count of fields in X and Y direction of the playboard
+	 * @param bombCounter	Interations needed for a bomb to explode
+	 * @param explosionRadius Count of fields a bomb causes to explode in every direction
+	 * @param maxSteps		Maximum amout of iteration till the game ends in a draw
+	 * @param stepSleep		Time to wait between each iteration
+	 */
+	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionRadius, int maxSteps, long stepSleep) {
 		this.boardSize = boardSize;		
 		this.maxBoardIndex = boardSize - PLAYER_RANGE;		
 		this.bombCounter = bombCounter;
-		this.explosionRadius = explosionArea;
+		this.explosionRadius = explosionRadius;
 		this.maxSteps = maxSteps;
 		this.usersList = usersList;		
 		this.stepSleep = stepSleep;
@@ -41,6 +61,9 @@ public class Game {
 		initializePlayers();
 	}
 	
+	/**
+	 * Initializes the player objects for the users
+	 */
 	private void initializePlayers() {
 		initializeStartingFields();		
 		for (User user : usersList) {			
@@ -49,6 +72,9 @@ public class Game {
 		playboard.setPlayers(new HashSet<Player>(this.users.values()));
 	}
 
+	/**
+	 * Initializes the fields where player start on
+	 */
 	private void initializeStartingFields() {
 		Field[][] board = playboard.getBoard();
 		starting_fields.add(board[MIN_FIELD][MIN_FIELD]);
@@ -58,6 +84,9 @@ public class Game {
 				
 	}
 	
+	/**
+	 * Initializes the board the game will take place on
+	 */
 	private void initializeBoard() {
 		Field[][] board = new Field[boardSize][boardSize];
 		for (int i = 0; i < boardSize; i++) {
@@ -72,41 +101,89 @@ public class Game {
 		this.playboard = new Playboard(board, maxSteps, explosionRadius, bombCounter);
 	}
 	
+	/******* Getter *******/
+	
+	/**
+	 * Returns maximum amout of iteration till the game ends in a draw
+	 * @return maxSteps
+	 */
 	public int getMaxSteps() {
 		return maxSteps;
 	}
 
+	/**
+	 * Returns the amount of interations needed for a bomb to explode
+	 * @return bombCounter
+	 */
 	public int getBombCounter() {
 		return bombCounter;
 	}
 
+	/**
+	 * Returns the count of fields a bomb causes to explode in every direction
+	 * @return explosionRadius
+	 */
 	public int getExplosionRadius() {
 		return explosionRadius;
 	}
 	
+	/**
+	 * Returns the count of fields in X and Y direction of the playboard
+	 * @return explosionRadius
+	 */
 	public int getBoardSize() {
 		return boardSize;
 	}
 	
+	/**
+	 * Returns the list of users that are playing the game
+	 * @return explosionRadius
+	 */
 	public List<User> getUsers(){
 		List<User> usersList = new ArrayList<>();
 		usersList.addAll(users.keySet());
 		return usersList;
 	}
 	
+	/**
+	 * Returns the playboard with every information about the current state of the game
+	 * @return playboard
+	 */
 	public Playboard getPlayboard() {
 		return playboard;
 	}	
 	
+	/**
+	 * Returns all fields that are affected by an explosion
+	 * @return explodedFields
+	 */
 	public Set<Field> getExplodedFields() {
 		return explodedFields;
 	}
 
-
+	/**
+	 * Is the game over?
+	 * @return gameOver
+	 */
 	public boolean isGameOver() {
 		return gameOver;
 	}
+	
+	
+	/**
+	 * Returns the time the game sleeps between every iteration
+	 * @return stepSleep
+	 */
+	public long getStepSleep() {
+		return stepSleep;
+	}
+	
+	/******* Public Methods *******/	
 
+	/**
+	 * Does a iteration of the game. Sleeps for a certain amount of time
+	 * @throws InterruptedException
+	 */
 	public void doIteration() throws InterruptedException {
 		Thread.sleep(stepSleep);
 		playerActions();	
@@ -114,6 +191,11 @@ public class Game {
 		checkGameOver();
 	}
 
+	/******* Private Helpers *******/		
+	
+	/**
+	 * Checks if the game is over
+	 */
 	private void checkGameOver() {
 		List<User> playersAlive = new ArrayList<>();
 		for (Entry<User, Player> entry : users.entrySet()) {
@@ -142,6 +224,9 @@ public class Game {
 		playboard.decreaseStepsLeft();
 	}
 
+	/**
+	 * Executes all player actions
+	 */
 	private void playerActions() {
 	    //Get the playboard only once
 	    Playboard currentBoard = playboard.clone();
@@ -180,6 +265,12 @@ public class Game {
 		}
 	}
 	
+	/**
+	 * Sets the position of a certain player to the coordinates x and y
+	 * @param x
+	 * @param y
+	 * @param player
+	 */
 	private void setPlayerPosition(int x, int y, Player player) {
 		Field destination = playboard.getBoard()[x][y];
 		if (destination.isPassable()) {
@@ -187,6 +278,9 @@ public class Game {
 		}
 	}
 	
+	/**
+	 * Updates the player isAlive status if a player is in an explosion
+	 */
 	private void updatePlayboard() {
 		explodedFields = explodingFields();
 		for (Player player : playboard.getPlayers()) {			
@@ -199,7 +293,11 @@ public class Game {
 	}
 
 
-
+	/**
+	 * Calculates all fields that are exploding in this iteration and 
+	 * sets the counter of every bomb that is not exploding minus one
+	 * @return
+	 */
 	private Set<Field> explodingFields() {
 		Set<Field> explodedFields = new HashSet<>();
 		Set<Bomb> bombs = playboard.getBombs();
@@ -218,6 +316,11 @@ public class Game {
 		return explodedFields;
 	}
 	
+	/**
+	 * Helper to calculate a chain explosion of a bomb
+	 * @param explodedFields
+	 * @return exploding fields from chainexplosion
+	 */
 	private Set<Field> chainExplosions(Set<Field> explodedFields) {
 		for (Bomb bomb : playboard.getBombs()) {
 			if (bomb.shouldExplode() || explodedFields.contains(bomb.getField()) && !bomb.isExploded()) {
@@ -226,11 +329,6 @@ public class Game {
 			}			
 		}
 		return explodedFields;
-	}
-	
-
-	public long getStepSleep() {
-		return this.stepSleep;
 	}
 	
 }
