@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +13,6 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import Core.Field;
@@ -25,12 +23,19 @@ import Core.Playboard;
 import Core.Player;
 import Core.User;
 
+
 public class GuiStart extends JPanel implements Runnable {
-	private static final long serialVersionUID = 1L;
+	/**
+	 * Constants
+	 */
 	private static final String RESOURCE_FOLDER = File.separator + "resources";
+	
+	/**
+	 * Instance variables
+	 */
+	private static final long serialVersionUID = 1L;
 	private int boardsize;
 	private boolean end = false;
-
 	private JFrame frame;
 	private ImagePanel[][] guiBoard;
 	private Game game;
@@ -43,7 +48,13 @@ public class GuiStart extends JPanel implements Runnable {
 	BufferedImage explosion;
 	private long gameoverSleep;
 	
-
+	/******** Constructor and Initializer ********/
+	
+	/**
+	 * Constructor
+	 * @param game
+	 * @param gameoverSleep
+	 */
 	public GuiStart(Game game, long gameoverSleep) {
 		this.gameoverSleep = gameoverSleep;
 		this.boardsize = game.getBoardSize();
@@ -51,17 +62,31 @@ public class GuiStart extends JPanel implements Runnable {
 		this.guiBoard = new ImagePanel[boardsize][boardsize];
 		this.game = game;
 		init();
+		new Thread(this).start();
 	}
 
+	/**
+	 * Initializes the GUI and the game
+	 */
 	private void init() {
 		setLayout(new GridLayout(boardsize, boardsize));
-		//frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); Default action is bad
 		frame.addWindowListener(new WindowAdapter() {
 		    public void windowClosing(WindowEvent e){
 		        GuiStart.this.end();                  
             }
 		});
-
+		initPanel();
+		initPictures();
+		frame.add(this);
+		frame.pack();
+		frame.setVisible(true);
+		initKeyListener();
+	}
+	
+	/**
+	 * Initializes the image panel
+	 */
+	private void initPanel() {
 		for (int j = 0; j < boardsize; j++) {
 			for (int i = 0; i < boardsize; i++) {
 				ImagePanel tempPanel = new ImagePanel();
@@ -70,25 +95,23 @@ public class GuiStart extends JPanel implements Runnable {
 				add(tempPanel);
 			}
 		}
-		loadPictures();
-		frame.add(this);
-		frame.pack();
-		frame.setVisible(true);
-
+	}
+	
+	/**
+	 * Initializes the key listener for human players
+	 */
+	private void initKeyListener() {
 		for (User user : game.getUsers()) {
 			if (user instanceof Human) {
 				frame.addKeyListener((Human) user);
 			}
 		};
-		new Thread(this).start();
 	}
-
-    protected void end()
-    {
-        this.end = true;
-    }
-
-    private void loadPictures() {
+	
+	/**
+	 * Initializes all pictures needed for the GUI
+	 */
+    private void initPictures() {
 		try {			
 			Set<Player> players = game.getPlayboard().getPlayers();
 			playerImages = new BufferedImage[players.size()];
@@ -110,40 +133,35 @@ public class GuiStart extends JPanel implements Runnable {
 		}
 
 	}
-	
-	private BufferedImage readImage(String filename) throws IOException, URISyntaxException {
-		return ImageIO.read(new File(getClass().getResource(RESOURCE_FOLDER + File.separator + filename).toURI()));
-	}
 
+	/**
+	 * Called if the thread ends
+	 */
+    protected void end()    {
+        this.end = true;
+    }
+
+
+    /**
+     * Game loop
+     */
 	@Override
 	public void run() {
 		while (!end) {	
 			boolean notGameOver = true;
 			while (notGameOver && !end) {
 				notGameOver = !game.isGameOver();
-				Playboard playboard = game.getPlayboard();
-				
+				Playboard playboard = game.getPlayboard();				
 				for (Field[] row : playboard.getBoard()) {
 					for (Field field : row) {
-						if (field.isWall()) {
-							guiBoard[field.getX()][field.getY()].setImage(wall);
-						} else {
-							guiBoard[field.getX()][field.getY()].setImage(emptyField);
-						}
+						guiBoard[field.getX()][field.getY()].setImage(field.isWall() ? wall : emptyField);
 					}				
-				}
-				
-				for (Bomb bomb : playboard.getBombs()) {
-					guiBoard[bomb.getX()][bomb.getY()].setImage(bombImg);
-				}
-				
+				}				
+				for (Bomb bomb : playboard.getBombs()) guiBoard[bomb.getX()][bomb.getY()].setImage(bombImg);
 				for (Player player : playboard.getPlayers()) {
 					guiBoard[player.getX()][player.getY()].setImage(imageForPlayer(player, playboard.getBombs()));
-				}
-				
-				for (Field field : game.getExplodedFields()) {
-					guiBoard[field.getX()][field.getY()].setImage(explosion);
-				}
+				}				
+				for (Field field : game.getExplodedFields()) guiBoard[field.getX()][field.getY()].setImage(explosion);
 				try {
 					game.doIteration();
 				} catch (InterruptedException e) {
@@ -153,10 +171,12 @@ public class GuiStart extends JPanel implements Runnable {
 			}
 			gameover();
 		}
-
         System.exit(0);
 	}
 
+	/**
+	 * Starts a new game if the old game is over 
+	 */
 	private void gameover() {
 		try {
 			Thread.sleep(gameoverSleep);
@@ -169,13 +189,31 @@ public class GuiStart extends JPanel implements Runnable {
 		game = new Game(game.getUsers(), game.getBoardSize(), game.getBombCounter(), game.getExplosionRadius(), game.getMaxSteps(), game.getStepSleep());
 		
 	}
+	
+	/********* Helpers *********/
+	
+	/**
+	 * Returns a image
+	 * @param filename		Name of the image in the resource folder
+	 * @return
+	 * @throws IOException
+	 * @throws URISyntaxException
+	 */
+	private BufferedImage readImage(String filename) throws IOException, URISyntaxException {
+		return ImageIO.read(new File(getClass().getResource(RESOURCE_FOLDER + File.separator + filename).toURI()));
+	}
 
+	/**
+	 * Loads the player images
+	 * @param player		Current players
+	 * @param bombs			Current bombs
+	 * @return
+	 */
 	private BufferedImage imageForPlayer(Player player, Set<Bomb> bombs) {
 		for (Bomb bomb : bombs) {
 			if (bomb.getField() == player.getField()) {
 				return playerWithBombImages[player.getId() - 1];
-			}
-			
+			}			
 		}
 		return playerImages[player.getId() - 1];
 	}

@@ -5,13 +5,19 @@ import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
+/**
+ * This class helps to change to color of images
+ */
 public class ImageHelper {
-	
+	/**
+	 * Instance variables
+	 */
 	private int colorIndex = 0;
 	private final List<Color> colors = new ArrayList<>();
 	
+	/**
+	 * Constructor
+	 */
 	public ImageHelper() {
 		colors.add(Color.BLUE);
 		colors.add(Color.GREEN);
@@ -25,8 +31,12 @@ public class ImageHelper {
 		colors.add(Color.CYAN);
 	}
 
-	static Random random = new Random();
-
+	/**
+	 * Changes the color of an image
+	 * @param image		Images to change
+	 * @param color		Color to use
+	 * @return image
+	 */
 	public BufferedImage colorImage(BufferedImage image, Color color) {
 		int width = image.getWidth();
 		int height = image.getHeight();
@@ -45,7 +55,11 @@ public class ImageHelper {
 		return image;
 	}
 	
-	Color getNextColor() {
+	/**
+	 * Returns the next available color
+	 * @return nextColor
+	 */
+	public Color getNextColor() {
 		Color nextColor = colors.get(colorIndex);
 		colorIndex++;
 		return nextColor;

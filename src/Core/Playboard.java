@@ -33,6 +33,10 @@ public class Playboard {
 		this.stepsLeft = stepsLeft;
 	}
 	
+	/**
+	 * Constructor for cloning
+	 * @param playboard
+	 */
 	private Playboard(Playboard playboard) {
 		this.board = playboard.board.clone();
 		this.stepsLeft = playboard.stepsLeft;
@@ -44,46 +48,107 @@ public class Playboard {
 		}
 	}
 	
+	/**
+	 * Returns an exact copy of the object
+	 */
 	public Playboard clone() {
 		return new Playboard(this);
 	}
 
+	/******* Getter *******/
+	
+	/**
+	 * Returns the count of fields a bomb causes to explode in every direction
+	 * @return
+	 */
 	public int getExplosionRadius() {
 		return explosionRadius;
 	}
 
+	/**
+	 * Returns the maximum amout of iteration till the game ends in a draw
+	 * @return bombCounter
+	 */
 	public int getBombCounter() {
 		return bombCounter;
 	}
-
-	public void setBoard(Field[][] board) {
-		this.board = board;
-	}
-
+	
+	/**
+	 * Returns all action ids that a user can make
+	 * @return POSSIBLE_ACTIONS
+	 */
 	public Set<Integer> getPossibleActions() {
 		return POSSIBLE_ACTIONS;
 	}
-
-	public void decreaseStepsLeft() {
-		stepsLeft--;
-	}
-
+	
+	/**
+	 * Returns the board of the game
+	 * @return board
+	 */
 	public Field[][] getBoard() {
 		return board;
 	}
 	
+	/**
+	 * Returns all players currently in the game
+	 * @return players
+	 */
 	public Set<Player> getPlayers() {
 		return players;
 	}
 
-	public void setPlayers(Set<Player> players) {
-		this.players = players;
-	}
-
+	/**
+	 * Returns alls bombs currenty on the playboard
+	 * @return
+	 */
 	public Set<Bomb> getBombs() {
 		return bombs;
 	}
 
+	/**
+	 * Returns the amount of steps that are left till the game is over
+	 * @return stepsLeft
+	 */
+	public int getStepsLeft() {
+		return stepsLeft;
+	}
+	
+	/******* Setter *******/
+
+	/**
+	 * Sets the current players
+	 * @param players
+	 */
+	public void setPlayers(Set<Player> players) {
+		this.players = players;
+	}
+	
+	/**
+	 * Sets the bombs currenty on the board
+	 * @param bombs
+	 */
+	public void setBombs(Set<Bomb> bombs) {
+		this.bombs = bombs;
+		
+	}
+
+	/******* Methods *******/
+
+	/**
+	 * Decreases the steps left by one
+	 */
+	public void decreaseStepsLeft() {
+		stepsLeft--;
+	}
+
+	/**
+	 * Adds a bomb to the playboard
+	 * @param bombCounter		Maximum amout of iteration till the game ends in a draw	
+	 * @param x					x-coordinate
+	 * @param y					y-coordinate
+	 * @param explosionRadius	Count of fields a bomb causes to explode in every direction
+	 * @param playerId			Id of the player who planted the bomb
+	 */
 	public void addBomb(int bombCounter, int x, int y, int explosionRadius, int playerId) {
 		Field field = board[x][y];
 		field.setPassable(false);
@@ -93,13 +158,7 @@ public class Playboard {
 		}
 	}
 
-	public int getStepsLeft() {
-		return stepsLeft;
-	}
 
-	public void setBombs(Set<Bomb> bombs) {
-		this.bombs = bombs;
-		
-	}	
+	
 	
 }
