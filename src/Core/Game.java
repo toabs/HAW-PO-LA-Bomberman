@@ -42,12 +42,12 @@ public class Game {
 	
 	/**
 	 * Constructor
-	 * @param usersList		List of users that are playing the game
-	 * @param boardSize		Count of fields in X and Y direction of the playboard
-	 * @param bombCounter	Interations needed for a bomb to explode
-	 * @param explosionRadius Count of fields a bomb causes to explode in every direction
-	 * @param maxSteps		Maximum amout of iteration till the game ends in a draw
-	 * @param stepSleep		Time to wait between each iteration
+	 * @param usersList			List of users that are playing the game
+	 * @param boardSize			Count of fields in X and Y direction of the playboard
+	 * @param bombCounter		Interations needed for a bomb to explode
+	 * @param explosionRadius 	Count of fields a bomb causes to explode in every direction
+	 * @param maxSteps			Maximum amout of iteration till the game ends in a draw
+	 * @param stepSleep			Time to wait between each iteration
 	 */
 	public Game(List<User> usersList, int boardSize, int bombCounter, int explosionRadius, int maxSteps, long stepSleep) {
 		this.boardSize = boardSize;		

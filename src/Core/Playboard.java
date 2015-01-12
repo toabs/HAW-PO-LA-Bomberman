@@ -4,8 +4,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * This class holds every information about the current state of the game
+ */
 public class Playboard {
-	
+	/**
+	 * Instance variables
+	 */
 	private Field[][] board;
 	private Set<Player> players = new HashSet<>();
 	private Set<Bomb> bombs = new HashSet<>();;
@@ -14,6 +19,13 @@ public class Playboard {
 	private int bombCounter;
 	private final Set<Integer> POSSIBLE_ACTIONS = new HashSet<>(Arrays.asList(new Integer[]{ 0, 1, 2, 3, 4, 5 }));
 		
+	/**
+	 * Constructor
+	 * @param board				The board of the game
+	 * @param stepsLeft			Steps that are left till the game is over
+	 * @param explosionRadius	Count of fields a bomb causes to explode in every direction
+	 * @param bombCounter		Maximum amout of iteration till the game ends in a draw
+	 */
 	public Playboard(Field[][] board, int stepsLeft, int explosionRadius, int bombCounter) {
 		this.explosionRadius = explosionRadius;
 		this.bombCounter = bombCounter;

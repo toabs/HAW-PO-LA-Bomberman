@@ -2,15 +2,22 @@ package Core;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-
+/**
+ * Class of a human player
+ */
 public class Human extends User implements KeyListener {
-
+	/**
+	 * Instance variables
+	 */
+	private int action;
+	
+	/**
+	 * Construcotr
+	 * @param id   id of the human
+	 */
 	public Human(int id) {
 		super(id);
 	}
-
-	private int action;
-	
 
 	// 0 = stay
 	// 1 = up
@@ -18,7 +25,6 @@ public class Human extends User implements KeyListener {
 	// 3 = left
 	// 4 = right
 	// 5 = bomb
-
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		if (getId() == 1) {			
@@ -58,7 +64,6 @@ public class Human extends User implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent arg0) {
-
 	}
 
 	@Override
@@ -105,6 +110,7 @@ public class Human extends User implements KeyListener {
 		return action;
 	}
 
+	@Override
 	public void resetMove() {
 		action = 0;
 	}
